@@ -4,13 +4,15 @@
  * Assignment: Quiz App
  * May 08, 2021
  *
- * Version1:
- * This project is to create an Android Quiz App by using Button, TextView, and Toast
+ * Version2:
+ * Add the lifecycle methods to save and restore my data in order to make sure
+ * no data is lost when the screen is rotated
  * @author dengxiao
  * */
 
 package ca.sheridancollege.dengxiao.geoquiz;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -48,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG,"onCreate(Bundle) called");
+
+/*        //way1.2 process rotation to retrieve
+        if(savedInstanceState !=null){
+            mCurrentIndex = savedInstanceState.getInt("save1",0);
+        }*/
 
         //inflating widgets and putting them on screen
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -155,5 +162,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG,"onDestory() called");
+    }
+
+/*    //way 1: process rotation
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Log.i(TAG,"onSaveInstanceState() was called");
+        outState.putInt("save1", mCurrentIndex);
+    }*/
+
+    //way2.1 process rotation to save
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Log.i(TAG,"onSaveInstanceState() was called");
+        outState.putCharSequence("save1", mQuestionTextView.getText());
+    }
+
+    //way2.2 process rotation to retrieve
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        Log.i(TAG, "onRestoreInstanceState() was called");
+        mQuestionTextView.setText(savedInstanceState.getCharSequence("save1"));
     }
 }
